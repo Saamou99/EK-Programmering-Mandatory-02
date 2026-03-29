@@ -2,10 +2,6 @@ from token_handler import get_token
 from api_handler import get_incidents
 from database import create_database, store_incidents
 
-import os
-print(os.getcwd())
-
-
 
 BASE_URL = "http://164.92.167.24"
 
@@ -35,7 +31,7 @@ def main():
         return
     print(data)
 
-    alerts = data.get("incidents", [])
+    alerts = data.get("value", [])
 
     print(f"Retrieved {len(alerts)} incidents\n")
 
@@ -45,8 +41,9 @@ def main():
     store_incidents(data)
 
     print(f"Stored {len(alerts)} alerts")
-    print("\nDone!")
+    print("\nData stored successfully in Database!")
 
+    print(data)
 
 if __name__ == "__main__":
     main()

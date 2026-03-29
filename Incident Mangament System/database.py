@@ -6,13 +6,13 @@ def create_database():
 
     c.execute("""
     CREATE TABLE IF NOT EXISTS alerts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        alertID TEXT,
-        incidentID TEXT,
-        category TEXT,
-        machineID TEXT,
-        firstSeen TEXT,
-        timestamp TEXT,
+        id              INTEGER PRIMARY KEY AUTOINCREMENT,
+        alertID         TEXT,
+        incidentId      TEXT,
+        category        TEXT,
+        machineID       TEXT,
+        firstSeen       TEXT,
+        timestamp       TEXT,
         detectionSource TEXT
     )
     """)
@@ -20,16 +20,15 @@ def create_database():
     conn.commit()
     conn.close()
 
-
 def store_incidents(data):
     conn = sqlite3.connect("incidents.db")
     c = conn.cursor()
 
     try:
-        for alert in data.get("alerts", []):
+        for alert in data.get("value", []):
             c.execute("""
             INSERT INTO alerts (
-                alertID, incidentID, category,
+                alertID, incidentId, category,
                 machineID, firstSeen, timestamp, detectionSource
             ) VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (
