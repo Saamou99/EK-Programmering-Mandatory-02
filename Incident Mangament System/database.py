@@ -32,10 +32,10 @@ def store_incidents(data):
                 machineID, firstSeen, timestamp, detectionSource
             ) VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (
-                alert.get("alertId"),
+                alert.get("alertID"),
                 alert.get("incidentId"),
                 alert.get("category"),
-                alert.get("machineId"),
+                alert.get("machineID"),
                 alert.get("firstSeen"),
                 alert.get("timestamp"),
                 alert.get("detectionSource")

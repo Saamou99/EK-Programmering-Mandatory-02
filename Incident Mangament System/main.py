@@ -43,7 +43,5 @@ def main():
     print(f"Stored {len(alerts)} alerts")
     print("\nData stored successfully in Database!")
 
-    print(data)
-
 if __name__ == "__main__":
     main()

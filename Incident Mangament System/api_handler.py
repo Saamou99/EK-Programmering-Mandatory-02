@@ -2,25 +2,42 @@ import requests
 
 def get_incidents(api_url, token):
     """
-    Fetch incidents from API.
+    Fetch ALL incidents using pagination.
     """
 
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    all_incidents = []   # 👈 HERE (inside function)
+    skip = 0
+
     try:
-        headers = {
-            "Authorization": f"Bearer {token}"
-        }
+        while True:
+            response = requests.get(
+                api_url,
+                headers=headers,
+                params={"$top": 100, "$skip": skip},
+                timeout=5
+            )
 
-        response = requests.get(api_url, headers=headers, timeout=5)
+            response.raise_for_status()
 
-        response.raise_for_status()
+            data = response.json()
 
-        return response.json()
+            # Get incidents batch
+            batch = data.get("value", [])
 
-    except requests.exceptions.Timeout:
-        print("Request timed out")
-    except requests.exceptions.HTTPError as e:
-        print("HTTP error:", e)
+            # Stop when no more data
+            if not batch:
+                break
+
+            all_incidents.extend(batch)
+
+            skip += 100  # Move to next page
+
+        return {"value": all_incidents}
+
     except requests.exceptions.RequestException as e:
-        print("Connection error:", e)
-
-    return None
+        print("API error:", e)
+        return None
