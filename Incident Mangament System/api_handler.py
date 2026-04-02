@@ -9,7 +9,7 @@ def get_incidents(api_url, token):
         "Authorization": f"Bearer {token}"
     }
 
-    all_incidents = []   # 👈 HERE (inside function)
+    all_incidents = []
     skip = 0
 
     try:
@@ -18,7 +18,7 @@ def get_incidents(api_url, token):
                 api_url,
                 headers=headers,
                 params={"$top": 100, "$skip": skip},
-                timeout=5
+                timeout=5 #Wait 5s for server to respond
             )
 
             response.raise_for_status()

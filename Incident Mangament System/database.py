@@ -7,15 +7,15 @@ def create_database():
     c.execute("""
     CREATE TABLE IF NOT EXISTS alerts (
         id              INTEGER PRIMARY KEY AUTOINCREMENT,
-        alertID         TEXT,
         incidentId      TEXT,
-        category        TEXT,
-        machineID       TEXT,
-        firstSeen       TEXT,
-        timestamp       TEXT,
-        detectionSource TEXT
-    )
-    """)
+        incidentName    TEXT,
+        severity        TEXT,
+        status          TEXT,
+        lastUpdateTime  TEXT,
+        summary         TEXT,
+        machines        INTEGER
+)
+""")
 
     conn.commit()
     conn.close()
@@ -28,17 +28,17 @@ def store_incidents(data):
         for alert in data.get("value", []):
             c.execute("""
             INSERT INTO alerts (
-                alertID, incidentId, category,
-                machineID, firstSeen, timestamp, detectionSource
+                incidentId, incidentName, severity,
+                status, lastUpdateTime, summary, machines
             ) VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (
-                alert.get("alertID"),
                 alert.get("incidentId"),
-                alert.get("category"),
-                alert.get("machineID"),
-                alert.get("firstSeen"),
-                alert.get("timestamp"),
-                alert.get("detectionSource")
+                alert.get("incidentName"),
+                alert.get("severity"),
+                alert.get("status"),
+                alert.get("lastUpdateTime"),
+                alert.get("summary"),
+                alert.get("machines")
             ))
 
         conn.commit()
