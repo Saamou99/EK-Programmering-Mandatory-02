@@ -1,18 +1,15 @@
 import requests
 
-def get_token(token_url, email):
-    """
-    Get authentication token using email.
-    """
-
+def get_token(token_url, email):        #Get authentication token using email
+  
     try:
-        response = requests.post(
+        response = requests.post(       #POST method || request method use json module internally
             token_url,
-            json={"email": email},
-            timeout=5
+            json={"email": email},      #Payload format
+            timeout=5                   #Timeout important for real systems
         )
 
-        response.raise_for_status()
+        response.raise_for_status()     #Error handling for 400/401/500 errors
 
         data = response.json()
         token = data.get("token")
@@ -20,8 +17,7 @@ def get_token(token_url, email):
         if not token:
             print("No token received from API")
             return None
-
-        print("Token received successfully")
+        
         return token
 
     except requests.exceptions.Timeout:
@@ -29,7 +25,7 @@ def get_token(token_url, email):
 
     except requests.exceptions.HTTPError as e:
         print("HTTP error:", e)
-        print("Response:", response.text)  # 🔥 debugging bonus
+        print("Response:", response.text)  
 
     except requests.exceptions.RequestException as e:
         print("Connection error:", e)
