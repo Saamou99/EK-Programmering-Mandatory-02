@@ -29,19 +29,20 @@ def main():
     if not data:
         print("Failed to fetch incidents")
         return
-    print(data)
 
     alerts = data.get("value", [])
 
     print(f"Retrieved {len(alerts)} incidents\n")
 
+    print("Creating database...")
+    create_database()
+
     print("Saving to database...")
 
-    create_database()
     store_incidents(data)
 
-    print(f"Stored {len(alerts)} alerts")
+    #print(f"Stored {len(alerts)} incidents")
     print("\nData stored successfully in Database!")
 
-if __name__ == "__main__":
+if __name__ == "__main__": #Making a file runnable as the entry point while allowing imports from other modules
     main()
