@@ -1,12 +1,11 @@
 import sqlite3
 from datetime import datetime
 
-
 def create_database():
     conn = sqlite3.connect("incidents.db")
     c = conn.cursor()
 
-    c.execute("DROP TABLE IF EXISTS alerts")        #Drop table to avoid duplicates
+    c.execute("DROP TABLE IF EXISTS alerts")    #Drop table to avoid duplicates
 
     c.execute("""
     CREATE TABLE alerts (
@@ -20,10 +19,8 @@ def create_database():
         inserted_at TEXT
     )
     """)
-
     conn.commit()
     conn.close()
-
 
 def store_incidents(data):
     conn = sqlite3.connect("incidents.db")

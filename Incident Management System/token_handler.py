@@ -1,9 +1,6 @@
 import requests
 
 def get_token(token_url, email):
-    """
-    Get authentication token from API using email.
-    """
 
     try:
         response = requests.post(

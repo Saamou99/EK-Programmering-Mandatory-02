@@ -1,9 +1,6 @@
 import requests
 
 def get_incidents(incidents_url, token):
-    """
-    Fetch all incidents from API using pagination.
-    """
 
     headers = {
         "Authorization": f"Bearer {token}"

@@ -9,7 +9,6 @@ INCIDENTS_URL = f"{BASE_URL}/api/incidents"
 
 EMAIL = "sana1001@stud.ek.dk"
 
-
 def main():
 
     print("\nGetting token...\n")
@@ -33,7 +32,6 @@ def main():
 
     print(f"Retrieved {len(incidents)} incidents\n")
 
-    # 🔥 Count alerts BEFORE saving
     total_alerts = sum(len(i.get("alerts", [])) for i in incidents)
 
     print("Fetching alerts...\n")
