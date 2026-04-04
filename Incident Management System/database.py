@@ -43,7 +43,8 @@ def store_incidents(data):                                              #Store i
                 incident.get("status"),
                 incident.get("lastUpdateTime"),
                 incident.get("summary"),
-                incident.get("impactedEntities", {}).get("machines")    #Nested JSON field
+                # FIX: nested JSON field
+                incident.get("impactedEntities", {}).get("machines")
             ))
 
         conn.commit()
