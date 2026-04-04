@@ -1,7 +1,6 @@
 import sqlite3
 
-# Create database and table
-def create_database():
+def create_database():                                                  #Create database and table
     conn = sqlite3.connect("incidents.db")
     c = conn.cursor()
 
@@ -20,14 +19,12 @@ def create_database():
     conn.commit()
     conn.close()
 
-# Store incidents in database
-def store_incidents(data):
+def store_incidents(data):                                              #Store incidents in database
     conn = sqlite3.connect("incidents.db")
     c = conn.cursor()
 
     try:
-        # Loop through incidents (NOT alerts)
-        for incident in data.get("value", []):
+        for incident in data.get("value", []):                          #Loop through incidents
 
             c.execute("""
             INSERT INTO incidents (
@@ -55,5 +52,6 @@ def store_incidents(data):
     except sqlite3.Error as e:
         print("Database error:", e)
         conn.rollback()
+    
     finally:
         conn.close()

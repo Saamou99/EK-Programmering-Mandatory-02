@@ -16,6 +16,7 @@ def main():
 
     if not token:
         print("Failed to get token\n")
+        
         return
 
     print("Token received successfully!\n")
@@ -28,6 +29,7 @@ def main():
 
     if not incidents:
         print("No incidents found\n")
+        
         return
 
     print(f"Retrieved {len(incidents)} incidents\n")
@@ -40,5 +42,6 @@ def main():
 
     print("\nData stored successfully in database!")
 
+    #print(data)
 if __name__ == "__main__":
     main()
