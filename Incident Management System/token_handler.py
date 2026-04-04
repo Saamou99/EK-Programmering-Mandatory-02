@@ -2,7 +2,7 @@ import requests
 
 def get_token(token_url, email):
     """
-    Get authentication token using email.
+    Get authentication token from API using email.
     """
 
     try:
@@ -21,15 +21,13 @@ def get_token(token_url, email):
             print("No token received from API")
             return None
 
-        print("Token received successfully")
         return token
 
     except requests.exceptions.Timeout:
-        print("Request timed out")
+        print("Request timed out while getting token")
 
     except requests.exceptions.HTTPError as e:
         print("HTTP error:", e)
-        print("Response:", response.text)  # 🔥 debugging bonus
 
     except requests.exceptions.RequestException as e:
         print("Connection error:", e)

@@ -2,7 +2,6 @@ from token_handler import get_token
 from api_handler import get_incidents
 from database import create_database, store_incidents
 
-
 BASE_URL = "http://164.92.167.24"
 
 TOKEN_URL = f"{BASE_URL}/api/auth/token"
@@ -12,55 +11,41 @@ EMAIL = "sana1001@stud.ek.dk"
 
 
 def main():
-    print("Getting token...")
+
+    print("\nGetting token...\n")
 
     token = get_token(TOKEN_URL, EMAIL)
 
     if not token:
-<<<<<<< HEAD
         print("Failed to get token\n")
-        
-=======
-        print("Failed to get token")
->>>>>>> parent of 7d5db6d (Sixth Push - Mandatory 02 Assignment Done!)
         return
 
-    print("Token received!\n")
+    print("Token received successfully!\n")
 
-    print("Fetching incidents...")
+    print("Fetching incidents...\n")
 
     data = get_incidents(INCIDENTS_URL, token)
-
-<<<<<<< HEAD
     incidents = data.get("value", [])
 
     if not incidents:
         print("No incidents found\n")
-        
-=======
-    if not data:
-        print("Failed to fetch incidents")
->>>>>>> parent of 7d5db6d (Sixth Push - Mandatory 02 Assignment Done!)
         return
 
-    alerts = data.get("value", [])
+    print(f"Retrieved {len(incidents)} incidents\n")
 
-    print(f"Retrieved {len(alerts)} incidents\n")
+    # 🔥 Count alerts BEFORE saving
+    total_alerts = sum(len(i.get("alerts", [])) for i in incidents)
 
-    print("Creating database...")
+    print("Fetching alerts...\n")
+    print(f"Retrieved {total_alerts} alerts\n")
+
+    print("Creating database...\n")
     create_database()
 
     print("Saving to database...")
+    stored_alerts = store_incidents(data)
 
-    store_incidents(data)
+    print(f"\nStored {len(incidents)} incidents and {stored_alerts} alerts in the database successfully!\n")
 
-    #print(f"Stored {len(alerts)} incidents")
-    print("\nData stored successfully in Database!")
-
-<<<<<<< HEAD
-    #print(data)
 if __name__ == "__main__":
-=======
-if __name__ == "__main__": #Making a file runnable as the entry point while allowing imports from other modules
->>>>>>> parent of 7d5db6d (Sixth Push - Mandatory 02 Assignment Done!)
     main()
