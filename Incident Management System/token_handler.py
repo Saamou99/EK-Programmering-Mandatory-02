@@ -1,4 +1,4 @@
-import requests  # Used to make HTTP requests
+import requests
 
 def get_token(token_url, email):
 
@@ -19,7 +19,7 @@ def get_token(token_url, email):
         # Extract token from response
         token = data.get("token")
 
-        # If token is missing → something went wrong
+        # If token is missing
         if not token:
             print("No token received from API")
             return None

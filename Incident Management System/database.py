@@ -1,80 +1,143 @@
-import sqlite3                  # Built-in Python database module (SQLite)
-from datetime import datetime  # Used to generate timestamps
+import sqlite3
+from datetime import datetime
 
 def create_database():
-    # Connect to database file (creates it if it doesn't exist)
-    conn = sqlite3.connect("incidents.db")
-    c = conn.cursor()  # Cursor is used to execute SQL commands
+    
+    conn = sqlite3.connect("incidents.db")  # Connect to database file (creates it if it doesn't exist)
+    c = conn.cursor()   # Cursor is used to execute SQL commands
 
-    # Drop table every run → prevents duplicate data
-    # (Useful for assignments, not typical in production systems)
+    # Drop BOTH tables to avoid duplicates on rerun
+    c.execute("DROP TABLE IF EXISTS incidents")
     c.execute("DROP TABLE IF EXISTS alerts")
-
-    # Create alerts table based on assignment requirements
+    
+    # Create incidents table
     c.execute("""
-    CREATE TABLE alerts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,  -- Unique internal ID
-        alert_id TEXT,                         -- Alert identifier from API
-        incident_id TEXT,                      -- Related incident ID
-        category TEXT,                         -- Type of threat (Malware, C2, etc.)
-        machine_id TEXT,                       -- Machine affected
-        first_seen TEXT,                       -- First detection timestamp
-        detection_source TEXT,                 -- Microsoft product that detected it
-        inserted_at TEXT                       -- When we stored it (required by assignment)
+    CREATE TABLE incidents (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        incident_id TEXT UNIQUE,
+        incident_name TEXT,
+        severity TEXT,
+        status TEXT,
+        classification TEXT,
+        determination TEXT,
+        created_time TEXT,
+        last_update_time TEXT,
+        assigned_to TEXT,
+        threat_family TEXT,
+        summary TEXT,
+        machines INTEGER,
+        users INTEGER,
+        mailboxes INTEGER
     )
     """)
-
+   
+    # Create alerts table
+    c.execute("""
+    CREATE TABLE alerts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        alert_id TEXT,
+        incident_id TEXT,
+        title TEXT,
+        category TEXT,
+        severity TEXT,
+        detection_source TEXT,
+        machine_id TEXT,
+        computer_dns_name TEXT,
+        first_seen TEXT,
+        last_seen TEXT,
+        inserted_at TEXT,
+        FOREIGN KEY (incident_id) REFERENCES incidents (incident_id)
+    )
+    """)
+    
     conn.commit()  # Save changes
-    conn.close()   # Close connection (very important)
+    conn.close()   # Close connection
 
 def store_incidents(data):
-    # Open database connection
     conn = sqlite3.connect("incidents.db")
     c = conn.cursor()
 
-    total_alerts = 0  # Counter for inserted alerts
+    total_incidents = 0     # Counter for inserted alerts
+    total_alerts = 0        # Counter for inserted alerts
 
     try:
         # Loop through incidents
         for incident in data.get("value", []):
+            
+            # Insert incidents
+            c.execute("""
+            INSERT INTO incidents (
+                incident_id,
+                incident_name,
+                severity,
+                status,
+                classification,
+                determination,
+                created_time,
+                last_update_time,
+                assigned_to,
+                threat_family,
+                summary,
+                machines,
+                users,
+                mailboxes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                incident.get("incidentId"),
+                incident.get("incidentName"),
+                incident.get("severity"),
+                incident.get("status"),
+                incident.get("classification"),
+                incident.get("determination"),
+                incident.get("createdTime"),
+                incident.get("lastUpdateTime"),
+                incident.get("assignedTo"),
+                incident.get("threatFamily"),
+                incident.get("summary"),
+                incident.get("impactedEntities", {}).get("machines"),
+                incident.get("impactedEntities", {}).get("users"),
+                incident.get("impactedEntities", {}).get("mailboxes")
+            ))
+            total_incidents += 1 # Count inserted incidents
 
-            # Extract incident ID once (used for all alerts inside)
-            incident_id = incident.get("incidentId")
-
-            # Loop through alerts inside each incident
             for alert in incident.get("alerts", []):
 
-                # Insert alert into database using parameterized query
-                # (prevents SQL injection and formatting errors)
                 c.execute("""
                 INSERT INTO alerts (
                     alert_id,
                     incident_id,
+                    title,
                     category,
-                    machine_id,
-                    first_seen,
+                    severity,
                     detection_source,
+                    machine_id,
+                    computer_dns_name,
+                    first_seen,
+                    last_seen,
                     inserted_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
-                    alert.get("alertId"),                             # Alert ID
-                    incident_id,                                      # Parent incident ID
-                    alert.get("category"),                            # Threat category
-                    alert.get("machineId"),                           # Machine affected
-                    alert.get("firstSeen") or alert.get("firstActivity"),  # Handle API inconsistency
-                    alert.get("detectionSource"),                     # Detection system
-                    datetime.now().isoformat()                        # Current timestamp
+                    alert.get("alertId"),
+                    incident.get("incidentId"),
+                    alert.get("title"),
+                    alert.get("category"),
+                    alert.get("severity"),
+                    alert.get("detectionSource"),
+                    alert.get("machineId"),
+                    alert.get("computerDnsName"),
+                    alert.get("firstActivity") or alert.get("firstSeen"),
+                    alert.get("lastSeen"),
+                    datetime.now().isoformat()
                 ))
+                total_alerts += 1 # Count inserted alerts
 
-                total_alerts += 1  # Count inserted alert
-
-        conn.commit()  # Save all inserts
+        conn.commit()
 
     except sqlite3.Error as e:
         print("Database error:", e)
         conn.rollback()  # Undo changes if something fails
 
     finally:
-        conn.close()  # Always close connection
+        conn.close()
 
-    return total_alerts  # Return number of inserted alerts
+    return total_incidents, total_alerts  # Return number of inserted incidents and alerts

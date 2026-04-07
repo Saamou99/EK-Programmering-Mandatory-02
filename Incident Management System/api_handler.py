@@ -1,4 +1,4 @@
-import requests  # Library used for making HTTP requests (API calls)
+import requests
 
 def get_incidents(incidents_url, token):
 
@@ -47,7 +47,7 @@ def get_incidents(incidents_url, token):
     except requests.exceptions.Timeout:
         print("Request timed out while fetching incidents")
 
-    # Handle HTTP errors (401, 404, 500, etc.)
+    # Handle HTTP errors
     except requests.exceptions.HTTPError as e:
         print("HTTP error:", e)
 

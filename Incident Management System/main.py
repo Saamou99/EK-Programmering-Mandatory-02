@@ -17,25 +17,27 @@ def main():
 
     print("\nGetting token...\n")
 
-    # Step 1: Get authentication token
+    # Get authentication token
     token = get_token(TOKEN_URL, EMAIL)
 
-    # If token failed → stop program
+    # If token failed
     if not token:
         print("Failed to get token\n")
+        
         return
 
     print("Token received successfully!\n")
 
     print("Fetching incidents...\n")
 
-    # Step 2: Fetch incidents from API
+    # Fetch incidents from API
     data = get_incidents(INCIDENTS_URL, token)
     incidents = data.get("value", [])
 
-    # If no incidents → stop program
+    # If no incidents
     if not incidents:
         print("No incidents found\n")
+        
         return
 
     print(f"Retrieved {len(incidents)} incidents\n")
@@ -48,18 +50,17 @@ def main():
 
     print("Creating database...\n")
 
-    # Step 3: Create database/table
+    # Create database/table
     create_database()
 
     print("Saving to database...")
 
-    # Step 4: Store alerts in database
-    stored_alerts = store_incidents(data)
+    # Store alerts in database
+    stored_incidents, stored_alerts = store_incidents(data)
 
-    # Final output
-    print(f"\nStored {len(incidents)} incidents and {stored_alerts} alerts in the database successfully!\n")
+    # Print output
+    print(f"\nStored {stored_incidents} incidents and {stored_alerts} alerts in the database successfully!\n")
 
-# Entry point of the program
-# Ensures script runs only when executed directly (not when imported)
+# Ensures script runs only when executed directly and not when imported
 if __name__ == "__main__":
     main()
