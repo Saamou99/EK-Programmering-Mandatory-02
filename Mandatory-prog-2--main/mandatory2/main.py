@@ -3,7 +3,6 @@ from database import create_table, insert_alert, DB_FILE
 from datetime import datetime
 import json
 
-
 def main():
     # Step 1: set up the database table
     print("Setting up database...")
